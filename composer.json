@@ -1,0 +1,16 @@
+{
+    "name": "jstroem/epay",
+    "description": "PHP integration for epay.dk's API interface.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jesper Lindstrøm Nielsen",
+            "email": "me@jstroem.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": { "Epay\\": "src/"
+        }
+    }
+}
