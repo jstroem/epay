@@ -14,22 +14,28 @@ use \Exception;
 **/
 class Subscription {
 
+	private $merchantnumber;
 	private $client;
-	private $url = "https://ssl.ditonlinebetalingssystem.dk/remote/subscription/authorize.asmx";
+	private $url = "https://ssl.ditonlinebetalingssystem.dk/remote/subscription.asmx";
 
-	public function __construct($trace = 0){
+	public function __construct($merchantnumber, $trace = 0){
+		$this->merchantnumber = $merchantnumber;
+
 		$this->client = new SoapClient(null, array(
 			'soap_version' => SOAP_1_2,
 			'location' => $this->url,
-			'uri' => 'https://ssl.ditonlinebetalingssystem.dk/remote/subscription/authorize',
+			'uri' => 'https://ssl.ditonlinebetalingssystem.dk/remote/subscription',
 			'trace' => $trace,
-
 		));
 	}
 
-	public function authorize($merchantnumber, $subscriptionid, $orderid, $amount, $currency, $instantcapture = 0, $group = null, $description = null, $email = null, $sms = null, $ipaddress = null, $pwd = null) {
+	public function call($method, $args){
+		return $this->client->__soapCall($method, $args);
+	}
+
+	public function authorize($subscriptionid, $orderid, $amount, $currency, $instantcapture = 0, $group = null, $description = null, $email = null, $sms = null, $ipaddress = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($subscriptionid, XSD_LONG), 'ns1:subscriptionid'),
 			new SoapParam(new SoapVar($orderid, XSD_STRING), 'ns1:orderid'),
 			new SoapParam(new SoapVar($amount, XSD_INT), 'ns1:amount'),
@@ -50,29 +56,29 @@ class Subscription {
 			$args[] = new SoapParam(new SoapVar($pwd, XSD_STRING), 'ns1:pwd');
 
 		try {
-			return  $this->client->__soapCall("authorize",$args);
+			return  $this->call("authorize",$args);
 		} catch(Exception $e){
 			return null;
 		}
 	}
 
-	public function deletesubscription($merchantnumber, $subscriptionid, $pwd = null) {
+	public function deletesubscription($subscriptionid, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($subscriptionid, XSD_LONG), 'ns1:subscriptionid')
 		);
 		if ($pwd != null)
 			$args[] = new SoapParam(new SoapVar($pwd, XSD_STRING), 'ns1:pwd');
 		try {
-			return $this->client->__soapCall("deletesubscription",$args);
+			return $this->call("deletesubscription",$args);
 		} catch(Exception $e){
 			return null;
 		}
 	}
 
-	public function getEpayError($merchantnumber, $language, $epayresponsecode = null, $pwd = null) {
+	public function getEpayError($language, $epayresponsecode = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($language, XSD_INT), 'ns1:language')
 		);
 		if ($pwd != null)
@@ -81,15 +87,15 @@ class Subscription {
 			$args[] = new SoapParam(new SoapVar($epayresponsecode, XSD_STRING), 'ns1:epayresponsecode');
 
 		try {
-			return $this->client->__soapCall("getEpayError",$args);
+			return $this->call("getEpayError",$args);
 		} catch(Exception $e){
 			return null;
 		}
 	}
 
-	public function getPbsError($merchantnumber, $language, $pbsresponsecode = null, $pwd = null) {
+	public function getPbsError($language, $pbsresponsecode = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($language, XSD_INT), 'ns1:language')
 		);
 		if ($pwd != null)
@@ -98,31 +104,28 @@ class Subscription {
 			$args[] = new SoapParam(new SoapVar($pbsresponsecode, XSD_INT), 'ns1:pbsresponsecode');
 
 		try {
-			return $this->client->__soapCall("getPbsError",$args);
+			return $this->call("getPbsError",$args);
 		} catch(Exception $e){
 			return null;
 		}
 	}
 
 
-	public function getsubscriptions($merchantnumber, $subscriptionid, $pwd = null) {
+	public function getsubscriptions($subscriptionid = 0, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($subscriptionid, XSD_INT), 'ns1:subscriptionid')
 		);
 		if ($pwd != null)
 			$args[] = new SoapParam(new SoapVar($pwd, XSD_STRING), 'ns1:pwd');
 
+
 		try {
-			return $this->client->__soapCall("getsubscriptions",$args);
+			$res = $this->call("getsubscriptions",$args);
+			return $res;
 		} catch(Exception $e){
 			return null;
 		}
 	}
 }
-
-$client = new \Epay\Payment(1);
-print_r($client->getcardinfo(8014369, 000012, 12575, 208, 3));
-
-
 ?>

@@ -15,9 +15,11 @@ use \Exception;
 class Payment {
 
 	private $client;
+	private $merchantnumber;
 	private $url = "https://ssl.ditonlinebetalingssystem.dk/remote/payment.asmx";
 
-	public function __construct($trace = 0){
+	public function __construct($merchantnumber, $trace = 0){
+		$this->merchantnumber = $merchantnumber;
 		$this->client = new SoapClient(null, array(
 			'soap_version' => SOAP_1_2,
 			'location' => $this->url,
@@ -27,9 +29,9 @@ class Payment {
 		));
 	}
 
-	public function capture($merchantnumber, $transactionid, $amount, $group = null, $pwd = null) {
+	public function capture($transactionid, $amount, $group = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($transactionid, XSD_LONG), 'ns1:transactionid'),
 			new SoapParam(new SoapVar($amount, XSD_INT), 'ns1:amount')
 		);
@@ -45,9 +47,9 @@ class Payment {
 		}
 	}
 
-	public function credit($merchantnumber, $transactionid, $amount, $group = null, $pwd = null) {
+	public function credit($transactionid, $amount, $group = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($transactionid, XSD_LONG), 'ns1:transactionid'),
 			new SoapParam(new SoapVar($amount, XSD_INT), 'ns1:amount')
 		);
@@ -62,9 +64,9 @@ class Payment {
 		}
 	}
 
-	public function delete($merchantnumber, $transactionid, $group = null, $pwd = null) {
+	public function delete($transactionid, $group = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($transactionid, XSD_LONG), 'ns1:transactionid')
 		);
 		if ($group != null)
@@ -78,9 +80,9 @@ class Payment {
 		}
 	}
 
-	public function getEpayError($merchantnumber, $language, $epayresponsecode = null, $pwd = null) {
+	public function getEpayError($language, $epayresponsecode = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($language, XSD_INT), 'ns1:language')
 		);
 		if ($pwd != null)
@@ -95,9 +97,9 @@ class Payment {
 		}
 	}
 
-	public function getPbsError($merchantnumber, $language, $pbsresponsecode = null, $pwd = null) {
+	public function getPbsError($language, $pbsresponsecode = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($language, XSD_INT), 'ns1:language')
 		);
 		if ($pwd != null)
@@ -112,9 +114,9 @@ class Payment {
 		}
 	}
 
-	public function getcardtype($merchantnumber, $cardnumber) {
+	public function getcardtype($cardnumber) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($cardnumber, XSD_STRING), 'ns1:cardnumber')
 		);
 		try {
@@ -124,9 +126,9 @@ class Payment {
 		}
 	}
 
-	public function gettransaction($merchantnumber, $transactionid, $pwd = null) {
+	public function gettransaction($transactionid, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($transactionid, XSD_LONG), 'ns1:transactionid')
 		);
 		if ($pwd != null)
@@ -138,9 +140,9 @@ class Payment {
 		}
 	}
 
-	public function gettransactionlist($merchantnumber, $status = null, $searchdatestart = null, $searchdateend = null, $searchgroup = null, $searchorderid = null, $pwd = null) {
+	public function gettransactionlist($status = null, $searchdatestart = null, $searchdateend = null, $searchgroup = null, $searchorderid = null, $pwd = null) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber')
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber')
 		);
 		if ($status != null)
 			$args[] = new SoapParam(new SoapVar($status, XSD_INT), 'ns1:status');
@@ -162,9 +164,9 @@ class Payment {
 	}
 
 
-	public function getcardinfo($merchantnumber, $cardno_prefix, $amount, $currency, $acquirer) {
+	public function getcardinfo($cardno_prefix, $amount, $currency, $acquirer) {
 		$args = array(
-			new SoapParam(new SoapVar($merchantnumber, XSD_INT), 'ns1:merchantnumber'),
+			new SoapParam(new SoapVar($this->merchantnumber, XSD_INT), 'ns1:merchantnumber'),
 			new SoapParam(new SoapVar($cardno_prefix, XSD_INT), 'ns1:cardno_prefix'),
 			new SoapParam(new SoapVar($amount, XSD_INT), 'ns1:amount'),
 			new SoapParam(new SoapVar($currency, XSD_INT), 'ns1:currency'),

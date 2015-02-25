@@ -2,7 +2,7 @@
     "name": "jstroem/epay",
     "description": "PHP integration for epay.dk's API interface.",
     "license": "MIT",
-    "version": "0.9.0",
+    "version": "0.9.1",
     "authors": [
         {
             "name": "Jesper Lindstrøm Nielsen",
